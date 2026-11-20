@@ -1,4 +1,4 @@
-"""設定檔與音效庫：內建合成音效 + 使用者匯入的音效。
+"""設定檔與音效庫：設定讀寫、匯入音效（afconvert）、刪除與名稱管理。
 
 設定與匯入音效存放於 ~/Library/Application Support/ZiHaiSwitch/
     config.json   使用者設定（音量、軸體、每鍵自訂…）；不含任何打字內容

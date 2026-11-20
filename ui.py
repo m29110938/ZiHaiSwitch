@@ -1,4 +1,4 @@
-"""共用 UI 小工具。"""
+"""共用 UI：帶程式圖示的提示框。"""
 
 from __future__ import annotations
 

@@ -84,6 +84,8 @@ MIT 授權允許你改完後自己發佈。為了不和原版的自動更新混�
 2. 執行 `build`，到 GitHub 新增 Release，tag 為 `v版本號`
 3. 上傳 `dist/` 裡的 `.zip` 與 `.zip.sig`（檔名不要改），說明貼 `dist/release-notes.md`
 
+使用到的技術整理在 [docs/TECH.md](docs/TECH.md)。若有用 Obsidian，可執行 `tools/obsidian_sync.py --dir <vault 資料夾>`，之後每次 `build` 會自動把功能、技術與版本紀錄同步成一篇筆記。
+
 ## 授權
 
 程式碼以 [MIT License](LICENSE) 釋出，可自由使用、修改、商用與再發佈，請保留版權聲明。

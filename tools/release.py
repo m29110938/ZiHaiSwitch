@@ -120,6 +120,14 @@ def build() -> None:
     print(f"  SHA-256 {digest}")
     print(f"GitHub Release：tag 設為 v{V.VERSION}，上傳 {zname} 與 {zname}.sig，說明貼 dist/release-notes.md")
 
+    # 同步 Obsidian 筆記（有設定資料夾才做；失敗不影響發版）
+    try:
+        import obsidian_sync
+        note = obsidian_sync.sync()
+        print(f"Obsidian 筆記已同步：{note}" if note else "Obsidian：未設定資料夾，略過（tools/obsidian_sync.py --dir ...）")
+    except Exception as e:  # noqa: BLE001
+        print(f"Obsidian 同步失敗（不影響發版）：{e}")
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

@@ -24,6 +24,8 @@ ZiHaiSwitch/
 ├── soundbank.py        # 音效註冊表（執行時用，只依賴 numpy）
 ├── wavio.py            # WAV 讀寫（取代 scipy.io.wavfile）
 ├── paths.py            # 資源路徑（開發 vs 打包 .app）
+├── docs/TECH.md        # 使用到的技術（給人看的說明，也會同步進 Obsidian 筆記）；改架構／技術時要一起更新
+├── tools/obsidian_sync.py # 產生 Obsidian 筆記「自嗨軸 ZiHaiSwitch.md」（README 功能＋TECH.md＋模組說明＋相依＋CHANGELOG），release.py build 後自動執行
 ├── tools/release.py    # 發版：keygen（產生簽章金鑰）、build（PyInstaller 打包＋zip＋簽章）
 ├── CHANGELOG.md / README.md
 ├── tools/make_icons.py # 產生 8-bit 圖示（狀態列 template + AppIcon.icns）
@@ -123,6 +125,7 @@ python3 -m venv .venv
 - 發新版：改 `version.py` 的 `VERSION` → `CHANGELOG.md` 加 `## vX.Y.Z` 段落 → `tools/release.py build` → GitHub Release（tag `vX.Y.Z`）上傳 `.zip` 與 `.zip.sig`。
 - **輕量化規則**：執行時只能依賴 numpy / sounddevice / rumps / pyobjc / certifi；scipy 只給程序化合成工具用（切片的高通濾波已改純 numpy 頻域實作），打包時 `--exclude-module scipy`。新增執行時依賴前要先確認體積。
 - **更新資安規則（不得放寬）**：只連 HTTPS＋GitHub 網域（含轉址最終網址）；Ed25519 簽章綁定「版本｜架構｜SHA-256」；只接受較新版本；解壓後檢查 bundle ID、版本、`codesign --verify --deep --strict`；替換失敗自動還原；請求不帶使用者資料。
+- Obsidian 筆記資料夾設定在 `~/.zihaiswitch/obsidian.json`（不進 git，repo 是公開的，不要把 vault 路徑寫進程式）；每次發版整篇覆蓋，模組第一行 docstring 會出現在筆記的「程式結構」表，要保持正確。
 - 簽章私鑰：`~/.zihaiswitch/update_signing.key`（權限 600），**絕不進 git**。
 - App 為 ad-hoc 簽章（無 Apple Developer ID）：使用者第一次要右鍵→打開；每次更新後「輸入監控」權限可能要重新開啟。
 - 實測（v1.0.0 打包版）：zip 17.5MB、.app 38MB、閒置 CPU 0.1～0.2%、RSS 約 118MB。
