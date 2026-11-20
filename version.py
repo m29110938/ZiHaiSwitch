@@ -1,7 +1,7 @@
 """版本與更新設定。發新版時只改 VERSION，並在 CHANGELOG.md 新增一段。"""
 
 APP_NAME = "自嗨軸 ZiHaiSwitch"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 BUNDLE_ID = "com.zihaiswitch.app"
 
 # GitHub 上放 Releases 的 repo（帳號/名稱）。建立 repo 後改這一行。
