@@ -50,8 +50,6 @@ python3 -m venv .venv
 2. 執行 `build`，到 GitHub 新增 Release，tag 為 `v版本號`
 3. 上傳 `dist/` 裡的 `.zip` 與 `.zip.sig`，說明貼 `dist/release-notes.md`
 
-私鑰在 `~/.zihaiswitch/update_signing.key`，**不要放進 git 或分享**。私鑰遺失的話，已安裝的使用者就無法自動更新。
-
 ## 音效來源
 
 全部是 CC0 授權的錄音，來源見 [SOUND_SOURCES.md](SOUND_SOURCES.md)。
