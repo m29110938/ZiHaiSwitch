@@ -133,6 +133,7 @@ class SwitchPlayer:
         self.engine = engine
         self.cfg = cfg
         self.lib = lib
+        self.trial = None  # 「從錄音建立音效」編輯中的音效：設定時所有鍵暫時改播它
         for p in sg.PROFILES:  # 啟動時預先合成並快取全部軸體
             sg.get_bank(p)
         self.engine.master = volume_to_gain(cfg["volume"])
@@ -146,6 +147,9 @@ class SwitchPlayer:
 
     def _samples(self, kind: KeyKind, up: bool, keycode: int | None):
         """回傳要播放的樣本變體；None 表示這個鍵被設成無聲。"""
+        trial = self.trial
+        if trial is not None:
+            return trial.get(f"{kind.value}_up" if up else kind.value)
         if keycode is not None:
             override = self.cfg["keys"].get(str(keycode))
             if override:
@@ -371,6 +375,7 @@ def run_app() -> None:
     from AppKit import NSApplication, NSImage
 
     from import_window import open_import
+    from record_window import open_record
     from settings_window import open_settings, refresh_key_window
 
     # 不在 Dock 顯示（只常駐狀態列）
@@ -435,6 +440,7 @@ def run_app() -> None:
                 self.profile_menu,
                 self.bell_item,
                 rumps.MenuItem("匯入音效…", callback=self.open_import),
+                rumps.MenuItem("從錄音建立音效…", callback=self.open_record),
                 rumps.MenuItem("自訂按鍵…", callback=self.open_keys),
                 None,
                 self.update_item,
@@ -524,7 +530,25 @@ def run_app() -> None:
             open_settings(cfg, lib, self.save, player.preview, on_profile=self.sync_profile)
 
         def open_import(self, _item):
-            open_import(lib, engine.play, on_changed=self.sounds_changed)
+            open_import(lib, engine.play, on_changed=self.sounds_changed, on_deleted=self.sound_deleted)
+
+        def open_record(self, _item):
+            open_record(engine.play, on_trial=self.set_trial, on_created=self.profile_created,
+                        on_deleted=self.sound_deleted, on_changed=self.sounds_changed)
+
+        def set_trial(self, bank):
+            player.trial = bank
+
+        def sound_deleted(self, sid):
+            library.forget_sound(cfg, sid)  # 目前音效、每鍵自訂若用到它，改回預設
+            self.save()
+            self.sounds_changed()
+
+        def profile_created(self, sid):
+            cfg["profile"] = sid  # 建立後直接切換過去，馬上就能打字聽
+            self.save()
+            self.build_profile_menu()
+            refresh_key_window()
 
         # ------------------------------------------------ 更新
         def _alert(self, title, text="", buttons=("好",)):

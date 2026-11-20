@@ -56,11 +56,16 @@ def read_wav(path: str | Path) -> tuple[int, np.ndarray]:
     return sr, x
 
 
-def write_wav(path: str | Path, sr: int, x: np.ndarray) -> None:
+def write_wav(path: str | Path, sr: int, x: np.ndarray, pcm16: bool = False) -> None:
+    """預設寫 float32；pcm16=True 寫 16-bit PCM（體積減半，用於保留原始錄音）。"""
     x = np.asarray(x, dtype="<f4")
     ch = 1 if x.ndim == 1 else x.shape[1]
-    raw = x.tobytes()
-    fmt = struct.pack("<HHIIHH", _FLOAT, ch, sr, sr * ch * 4, ch * 4, 32)
+    if pcm16:
+        raw = (np.clip(x, -1.0, 1.0) * 32767).astype("<i2").tobytes()
+        fmt = struct.pack("<HHIIHH", _PCM, ch, sr, sr * ch * 2, ch * 2, 16)
+    else:
+        raw = x.tobytes()
+        fmt = struct.pack("<HHIIHH", _FLOAT, ch, sr, sr * ch * 4, ch * 4, 32)
     out = b"RIFF" + struct.pack("<I", 4 + 8 + len(fmt) + 8 + len(raw)) + b"WAVE"
     out += b"fmt " + struct.pack("<I", len(fmt)) + fmt + b"data" + struct.pack("<I", len(raw)) + raw
     Path(path).write_bytes(out)

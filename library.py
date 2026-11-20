@@ -230,3 +230,33 @@ class SoundLibrary:
         if sid.startswith("user:"):
             return self._user.get(sid)
         return None
+
+
+# ---------------------------------------------------------------- 刪除
+def delete_user_sound(sid: str) -> None:
+    """刪除匯入音效（檔案與名稱）。"""
+    if not sid.startswith("user:"):
+        return
+    f = SOUND_DIR / f"{sid[len('user:'):]}.wav"
+    if f.parent == SOUND_DIR and f.is_file():
+        f.unlink()
+    names = load_names()
+    if names.pop(sid, None) is not None:
+        NAMES_PATH.write_text(json.dumps(names, ensure_ascii=False, indent=2), "utf-8")
+    sg.unregister(sid)
+
+
+def forget_sound(cfg: dict, sid: str) -> None:
+    """音效被刪除後，清掉設定裡引用它的地方（目前音效、每鍵自訂）。"""
+    if cfg.get("profile") == sid:
+        cfg["profile"] = DEFAULT_CONFIG["profile"] if DEFAULT_CONFIG["profile"] in sg.PROFILES \
+            else next(iter(sg.PROFILES), "")
+    refs = (sid,)
+    prefix = f"builtin:{sid}:"
+    for key in list(cfg.get("keys", {})):
+        ov = cfg["keys"][key]
+        for w in list(ov):
+            if ov[w] in refs or str(ov[w]).startswith(prefix):
+                del ov[w]
+        if not ov:
+            del cfg["keys"][key]

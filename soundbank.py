@@ -21,6 +21,11 @@ def register_bank(name: str, label: str, bank: dict[str, list[np.ndarray]]) -> N
     PROFILES[name] = label
 
 
+def unregister(name: str) -> None:
+    _REGISTERED.pop(name, None)
+    PROFILES.pop(name, None)
+
+
 def get_bank(profile: str) -> dict[str, list[np.ndarray]]:
     if profile not in _REGISTERED:
         raise ValueError(f"unknown profile: {profile}")

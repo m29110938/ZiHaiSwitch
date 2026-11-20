@@ -69,6 +69,7 @@ class ImportController(NSObject):
             return b
 
         self.preview_btn = button("試聽", 20, 90, "preview:")
+        self.delete_btn = button("刪除", 20 + 90 + 8, 90, "deleteSound:")
         button("匯入…", WIN_W - 20 - 110, 110, "importSound:")
         self.window = win
         self.reload()
@@ -80,6 +81,7 @@ class ImportController(NSObject):
         self.rows = [(sid, label, lib.samples(sid, False)) for sid, label in lib.user_options()]
         self.table.reloadData()
         self.preview_btn.setEnabled_(bool(self.rows))
+        self.delete_btn.setEnabled_(bool(self.rows))
 
     # ------------------------------------------------------------ NSTableView data source
     def numberOfRowsInTableView_(self, table):
@@ -138,6 +140,26 @@ class ImportController(NSObject):
             self.table.selectRowIndexes_byExtendingSelection_(
                 objc.lookUpClass("NSIndexSet").indexSetWithIndex_(ids.index(sid)), False)
 
+    def deleteSound_(self, sender):
+        row = self.table.selectedRow()
+        if not (0 <= row < len(self.rows)):
+            return
+        sid, label, _ = self.rows[row]
+        alert = NSAlert.alloc().init()
+        alert.setMessageText_(f"刪除「{label}」？")
+        alert.setInformativeText_("刪除後無法復原")
+        alert.addButtonWithTitle_("刪除")
+        alert.addButtonWithTitle_("取消")
+        if int(alert.runModal()) != 1000:
+            return
+        try:
+            library.delete_user_sound(sid)
+        except OSError:
+            return
+        self.ctx["lib"].reload_user()
+        self.reload()
+        self.ctx["on_deleted"](sid)
+
     def importSound_(self, sender):
         panel = NSOpenPanel.openPanel()
         panel.setAllowsMultipleSelection_(True)
@@ -166,11 +188,11 @@ class ImportController(NSObject):
 _controller = None
 
 
-def open_import(lib, play, on_changed=lambda: None):
+def open_import(lib, play, on_changed=lambda: None, on_deleted=lambda sid: None):
     global _controller
     if _controller is None:
         _controller = ImportController.alloc().initWithContext_(
-            {"lib": lib, "play": play, "on_changed": on_changed})
+            {"lib": lib, "play": play, "on_changed": on_changed, "on_deleted": on_deleted})
         _controller.build()
     else:
         _controller.reload()
