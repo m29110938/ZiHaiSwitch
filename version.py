@@ -5,7 +5,7 @@ VERSION = "1.0.0"
 BUNDLE_ID = "com.zihaiswitch.app"
 
 # GitHub 上放 Releases 的 repo（帳號/名稱）。建立 repo 後改這一行。
-UPDATE_REPO = "OWNER/ZiHaiSwitch"
+UPDATE_REPO = "m29110938/ZiHaiSwitch"
 
 # 更新檔簽章公鑰（Ed25519，hex）。由 `tools/release.py keygen` 產生；私鑰只存在發版者電腦。
 UPDATE_PUBLIC_KEY = "6c37492afa390153657aa8d4a9b30cb43089434fb8e2797c8f42daa8b31498c2"
