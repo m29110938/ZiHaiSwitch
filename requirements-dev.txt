@@ -1,0 +1,4 @@
+# 開發／切片／打包才需要
+-r requirements.txt
+scipy>=1.11
+pyinstaller>=6.16

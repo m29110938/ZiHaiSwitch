@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+assets/*.wav
+.DS_Store
+sound/
+build/
+dist/
+
+# 原始下載音檔（授權見 SOUND_SOURCES.md）
+data/
+
+# 簽章私鑰、打包產物（保險）
+*.key
+*.spec
