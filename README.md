@@ -35,21 +35,56 @@ macOS 狀態列小工具：打字時在耳機裡播放機械鍵盤音效。無�
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python main.py
+.venv/bin/python main.py              # 狀態列 App
+.venv/bin/python main.py --selftest   # 不需權限：播放全部音效、印出延遲
 ```
 
-## 發版（維護者）
+從終端機執行時，「輸入監控」權限要授予啟動 Python 的那個 App（Terminal、iTerm、VS Code…），授權後完全結束再重開。
+
+程式架構、低延遲規範、隱私規則等開發細節寫在 [CLAUDE.md](CLAUDE.md)。
+
+## 參與貢獻
+
+歡迎任何腦洞：新音效、新功能、改介面、修 bug 都可以。
+
+- **回報問題／許願**：開 [Issue](../../issues)，附上 macOS 版本與重現步驟
+- **改程式**：fork → 開分支 → 改完跑 `main.py --selftest` → 發 Pull Request
+- **新增內建音效**：只收 CC0 或可商用授權的錄音，用 `tools/slice_recording.py` 切片，並把來源與授權記錄到 [SOUND_SOURCES.md](SOUND_SOURCES.md)
+
+不能違反的規則（PR 一律檢查）：
+
+1. 不讀取、不儲存、不輸出任何按鍵內容（只能用 keycode 判斷按鍵類型）
+2. 只監聽、不攔截或修改按鍵事件；安全輸入（密碼框）時必須停止監聽
+3. 除了檢查更新，不加入任何網路連線、遙測或資料上傳
+4. 不放寬更新的簽章驗證
+5. 不明顯增加閒置 CPU 與 App 體積；新增執行時依賴要說明理由
+
+## 發佈自己的改版
+
+MIT 授權允許你改完後自己發佈。為了不和原版的自動更新混在一起，發佈前請先：
+
+1. `version.py`：`UPDATE_REPO` 改成你的 GitHub repo，`BUNDLE_ID` 改成你自己的（例如 `com.yourname.zihaiswitch`）
+2. 產生你自己的簽章金鑰（公鑰會自動寫入 `version.py`）：
 
 ```bash
 .venv/bin/pip install -r requirements-dev.txt
-.venv/bin/python tools/release.py keygen   # 只有第一次：產生簽章金鑰
+.venv/bin/python tools/release.py keygen
+```
+
+私鑰存在你電腦的 `~/.zihaiswitch/`，不要放進 git。
+
+## 發版
+
+```bash
 .venv/bin/python tools/release.py build    # 打包＋簽章，輸出到 dist/
 ```
 
 1. 改 `version.py` 的 `VERSION`，並在 `CHANGELOG.md` 加上該版本的段落
 2. 執行 `build`，到 GitHub 新增 Release，tag 為 `v版本號`
-3. 上傳 `dist/` 裡的 `.zip` 與 `.zip.sig`，說明貼 `dist/release-notes.md`
+3. 上傳 `dist/` 裡的 `.zip` 與 `.zip.sig`（檔名不要改），說明貼 `dist/release-notes.md`
 
-## 音效來源
+## 授權
 
-全部是 CC0 授權的錄音，來源見 [SOUND_SOURCES.md](SOUND_SOURCES.md)。
+程式碼以 [MIT License](LICENSE) 釋出，可自由使用、修改、商用與再發佈，請保留版權聲明。
+
+內建音效全部是 CC0 授權的錄音，來源見 [SOUND_SOURCES.md](SOUND_SOURCES.md)。
