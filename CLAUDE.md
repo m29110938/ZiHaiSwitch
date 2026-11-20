@@ -15,6 +15,7 @@ ZiHaiSwitch/
 ├── settings_window.py  # 「自訂按鍵」視窗：最上方「全部按鍵」一鍵切換整組音效（會確認並清除個別設定），再點鍵個別設定；試打區
 ├── import_window.py    # 「匯入音效」視窗：匯入後直接在列表名稱欄命名（不跳對話框）、試聽、刪除
 ├── record_window.py    # 「從錄音建立音效」視窗：匯入整段打字錄音→自動切片→勾選／指定用途→存成一組音效
+├── ui.py               # 共用提示框 ui.alert()：一律帶程式圖示（原始碼執行時系統預設是 Python 圖示），不要直接 NSAlert
 ├── keymap.py           # 設定視窗用的 Mac ANSI 鍵位表（只供顯示）
 ├── sampler.py          # 取樣軸體：錄音偵測敲擊、切片、分按下／放開，存成 profiles/<name>/（只用 numpy，App 內可用）
 ├── version.py          # VERSION、BUNDLE_ID、UPDATE_REPO（GitHub 帳號/repo）、更新簽章公鑰

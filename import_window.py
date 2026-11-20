@@ -6,7 +6,6 @@ import random
 
 import objc
 from AppKit import (
-    NSAlert,
     NSApp,
     NSBackingStoreBuffered,
     NSButton,
@@ -19,6 +18,7 @@ from AppKit import (
 from Foundation import NSMakeRect, NSObject
 
 import library
+import ui
 import soundbank as sg
 
 WIN_W, WIN_H = 420, 340
@@ -145,11 +145,7 @@ class ImportController(NSObject):
         if not (0 <= row < len(self.rows)):
             return
         sid, label, _ = self.rows[row]
-        alert = NSAlert.alloc().init()
-        alert.setMessageText_(f"刪除「{label}」？")
-        alert.setInformativeText_("刪除後無法復原")
-        alert.addButtonWithTitle_("刪除")
-        alert.addButtonWithTitle_("取消")
+        alert = ui.alert(f"刪除「{label}」？", "刪除後無法復原", ("刪除", "取消"))
         if int(alert.runModal()) != 1000:
             return
         try:
@@ -179,10 +175,7 @@ class ImportController(NSObject):
             self.ctx["on_changed"]()
             self.edit_name(added[-1])  # 匯入後直接在列表中命名
         if failed:
-            alert = NSAlert.alloc().init()
-            alert.setMessageText_("無法匯入")
-            alert.setInformativeText_("\n".join(failed))
-            alert.runModal()
+            ui.alert("無法匯入", "\n".join(failed)).runModal()
 
 
 _controller = None

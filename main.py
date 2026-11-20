@@ -552,14 +552,10 @@ def run_app() -> None:
 
         # ------------------------------------------------ 更新
         def _alert(self, title, text="", buttons=("好",)):
-            from AppKit import NSAlert
+            import ui
 
             NSApplication.sharedApplication().activateIgnoringOtherApps_(True)
-            a = NSAlert.alloc().init()
-            a.setMessageText_(title)
-            a.setInformativeText_(text)
-            for b in buttons:
-                a.addButtonWithTitle_(b)
+            a = ui.alert(title, text, buttons)
             return int(a.runModal()) - 1000  # 0 = 第一個按鈕
 
         def _run_bg(self, kind, fn, manual):

@@ -6,7 +6,6 @@ from pathlib import Path
 
 import objc
 from AppKit import (
-    NSAlert,
     NSApp,
     NSBackingStoreBuffered,
     NSButton,
@@ -24,6 +23,7 @@ from Foundation import NSMakeRect, NSObject
 import library
 import sampler
 import soundbank as sg
+import ui
 
 WIN_W, WIN_H = 520, 460
 _MODAL_OK = 1
@@ -169,10 +169,7 @@ class RecordController(NSObject):
 
     @objc.python_method
     def alert(self, title, text=""):
-        a = NSAlert.alloc().init()
-        a.setMessageText_(title)
-        a.setInformativeText_(text)
-        a.runModal()
+        ui.alert(title, text).runModal()
 
     # ------------------------------------------------------------ NSTableView data source
     def numberOfRowsInTableView_(self, table):
@@ -259,11 +256,7 @@ class RecordController(NSObject):
         if self.editing is None:
             return
         label = dict(self.mine).get(self.editing, "")
-        a = NSAlert.alloc().init()
-        a.setMessageText_(f"刪除「{label}」？")
-        a.setInformativeText_("刪除後無法復原")
-        a.addButtonWithTitle_("刪除")
-        a.addButtonWithTitle_("取消")
+        a = ui.alert(f"刪除「{label}」？", "刪除後無法復原", ("刪除", "取消"))
         if int(a.runModal()) != 1000:
             return
         sid = self.editing

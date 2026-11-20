@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import objc
 from AppKit import (
-    NSAlert,
     NSApp,
     NSBackingStoreBuffered,
     NSButton,
@@ -26,6 +25,7 @@ from AppKit import (
 from Foundation import NSAttributedString, NSMakeRect, NSObject
 
 import keymap
+import ui
 
 UNIT = 44
 KEY_H = 36
@@ -244,11 +244,8 @@ class SettingsController(NSObject):
         sid = sender.selectedItem().representedObject()
         n = len(cfg["keys"])
         if n:
-            alert = NSAlert.alloc().init()
-            alert.setMessageText_("全部按鍵改用「%s」" % sender.selectedItem().title())
-            alert.setInformativeText_(f"會清除 {n} 個按鍵的個別設定")
-            alert.addButtonWithTitle_("套用")
-            alert.addButtonWithTitle_("取消")
+            alert = ui.alert("全部按鍵改用「%s」" % sender.selectedItem().title(),
+                             f"會清除 {n} 個按鍵的個別設定", ("套用", "取消"))
             if alert.runModal() != 1000:
                 self.select_popup(sender, cfg["profile"])
                 return
